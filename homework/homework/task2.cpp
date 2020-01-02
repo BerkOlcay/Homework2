@@ -3,7 +3,7 @@
 #include <iostream>
 
 
-#include "HOGDescriptor.h"
+#include "HOG_Descriptor.h"
 #include "RandomForest.h"
 
 using namespace std;
@@ -33,6 +33,24 @@ void testDTrees() {
       * Experiment with the MaxDepth parameter, to see how it affects the performance
 
     */
+
+    cv::Ptr<cv::ml::DTrees> tree = cv::ml::DTrees::create();
+
+    tree->setMaxCategories(maxCategories);
+    tree->setMaxDepth(maxDepth);
+    tree->setMinSampleCount(minSampleCount);
+    tree->setCVFolds(CVFolds);
+
+    cv::Ptr<cv::ml::TrainData> trainData = cv::ml::TrainData::create(subfeatures, cv::ml::ROW_SAMPLE, sublabels);
+
+    // train tree
+    tree->train(trainData);
+    auto y_pred = cv::OutputArray(sublabels);
+    y_pred.clear();
+    auto error = tree->calcError(trainData, true, y_pred);
+
+    std::cout << "training done and error " << error << endl;
+
 
     performanceEval<cv::ml::DTrees>(tree, train_data);
     performanceEval<cv::ml::DTrees>(tree, test_data);

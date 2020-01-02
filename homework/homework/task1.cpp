@@ -54,17 +54,11 @@ int main() {
     HOG_Descriptor* hog = new HOG_Descriptor();
     Size default_size = hog->getWinSize();
     hog->detectHOGDescriptor(im, descriptors, default_size, false);
-    cout << descriptors.size() << endl;
     hog->detectHOGDescriptor(grayImg, descriptors, default_size, false);
-    cout << descriptors.size() << endl;
     hog->detectHOGDescriptor(flipImg, descriptors, default_size, false);
-    cout << descriptors.size() << endl;
     hog->detectHOGDescriptor(resImg, descriptors, default_size, false);
-    cout << descriptors.size() << endl;
     hog->detectHOGDescriptor(rotImg, descriptors, default_size, false);
-    cout << descriptors.size() << endl;
     hog->detectHOGDescriptor(paddImg, descriptors, default_size, true);
-    cout << descriptors.size() << endl;
 
     return 0;
 }

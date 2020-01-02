@@ -13,7 +13,7 @@ void HOG_Descriptor::initDetector() {
 
 }
 
-void HOG_Descriptor::detectHOGDescriptor(cv::Mat& im, std::vector<float>& feat, cv::Size sz, bool show) {
+void HOG_Descriptor::detectHOGDescriptor(cv::Mat& im, std::vector<float>& feat, std::vector<float>& labels, int num_classes, cv::Size sz, bool show) {
     if (!is_init) {
         initDetector();
     }
@@ -26,6 +26,36 @@ void HOG_Descriptor::detectHOGDescriptor(cv::Mat& im, std::vector<float>& feat, 
      */
 	int cellSide = cell_size.height;
 
+	for (int classe = 0; classe < num_classes; classe++) {
+		fs::path p(absolutePath + std::to_string(classe));
+		for (auto i = fs::directory_iterator(p); i != fs::directory_iterator(); i++)
+		{
+			if (!fs::is_directory(i->path())) //we eliminate directories
+			{
+				cout << absolutePath + std::to_string(classe) + "/" + i->path().filename().string() << endl;
+				Mat img = imread(absolutePath + std::to_string(classe) + "/" + i->path().filename().string());
+
+				// Resizing the picture
+				Mat resizedImg;
+				paddingToNextShape(img, resizedImg, cellSide, SQUARE_RESIZED, newSize);
+
+				if (training == 1) {
+					add_augmented_picture(descr, labels, features, resizedImg, classe);
+				}
+				else {
+					(*labels).push_back(classe);
+					std::vector<float> descriptors = std::vector<float>();
+					descr.compute(resizedImg, descriptors);
+					Mat descriptorsToAdd = ((Mat)descriptors).reshape(1, 1);
+					descriptorsToAdd.convertTo(descriptorsToAdd, CV_32F);
+					(*features).push_back(descriptorsToAdd);
+				}
+
+			}
+			else
+				continue;
+		}
+	}
 
 	// Resizing the picture
 	Mat resizedImg;
@@ -34,6 +64,7 @@ void HOG_Descriptor::detectHOGDescriptor(cv::Mat& im, std::vector<float>& feat, 
 	std::vector<float> descriptors = std::vector<float>();
 	hog_detector.compute(resizedImg, descriptors);
 	feat.insert(feat.end(), descriptors.begin(), descriptors.end());
+	(*labels).push_back(classe);
 	
 	if (show == true) {
 		this->visualizeHOG(resizedImg, feat, hog_detector, 10);

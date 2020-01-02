@@ -22,11 +22,14 @@
     <ClCompile Include="HOG_Descriptor.cpp" />
     <ClCompile Include="hog_visualization.cpp" />
     <ClCompile Include="img_functions.cpp" />
+    <ClCompile Include="RandomForest.cpp" />
     <ClCompile Include="task1.cpp" />
+    <ClCompile Include="task2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HOG_Descriptor.h" />
     <ClInclude Include="img_functions.h" />
+    <ClInclude Include="RandomForest.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

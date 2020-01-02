@@ -27,12 +27,21 @@
     <ClCompile Include="HOG_Descriptor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RandomForest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="task2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="img_functions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="HOG_Descriptor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RandomForest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

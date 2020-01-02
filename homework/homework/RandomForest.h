@@ -7,6 +7,9 @@
 
 #include <opencv2/opencv.hpp>
 #include <vector>
+#include <unordered_set>
+using namespace cv;
+
 
 class RandomForest
 {
@@ -24,11 +27,10 @@ public:
     void setMinSampleCount(int minSampleCount);
     void setMaxCategories(int maxCategories);
 
-
-    void train(/* Fill */);
-
-    float predict(/* Fill */);
-
+    void getNDistinctRand(std::unordered_set<int>* index, int max_number, int number_samples);
+    void subsample(Mat* sublabels, Mat* subfeatures, Mat labels, Mat features, float ratio);
+    void train(Mat features, Mat labels);
+    void predict(cv::InputArray samples, Mat test_labels, cv::Mat* resp, cv::Ptr<cv::ml::TrainData> testData, cv::Mat* confidence, bool task2);
 
 private:
     int mTreeCount;
