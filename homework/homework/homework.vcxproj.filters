@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="task1.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="hog_visualization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -33,6 +30,9 @@
     <ClCompile Include="task2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="boundingBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="img_functions.h">
@@ -42,6 +42,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RandomForest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bounding_box.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

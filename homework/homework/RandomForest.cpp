@@ -103,6 +103,7 @@ void RandomForest::subsample(Mat* sublabels, Mat* subfeatures, Mat labels, Mat f
 void RandomForest::train(Mat features, Mat labels) {
 
     float ratio = 0.4;
+	float avg_train_error = 0.0;
 
     for (int i = 0; i < mTreeCount; i++) {
         Mat subfeatures;
@@ -118,10 +119,10 @@ void RandomForest::train(Mat features, Mat labels) {
         auto y_pred = cv::OutputArray(sublabels);
         y_pred.clear();
         auto error = mTrees[i]->calcError(sub_trainData, true, y_pred);
-
-        std::cout << "training done and error " << error << endl;
+        std::cout << "tree " << i << " training done and error " << error << endl;
+		avg_train_error += error / mTreeCount;
     }
-
+	std::cout << "average train error " << avg_train_error << endl;
 }
 
 
@@ -142,10 +143,10 @@ void get_max_index(cv::Mat matrix, int* index, int* value) {
 }
 
 
-void RandomForest::predict(cv::InputArray samples, Mat test_labels, cv::Mat* resp, cv::Ptr<cv::ml::TrainData> testData, cv::Mat* confidence, bool task2) {
-
+void RandomForest::predict(Mat samples, Mat test_labels, cv::Mat* resp, cv::Ptr<cv::ml::TrainData> testData, cv::Mat* confidence, bool task2) {
 	cv::Size s = samples.size();
 
+	float avg_test_error = 0.0;
 	cv::Mat pred = Mat(s.height, 0, CV_32S);
 	for (int i = 0; i < mTreeCount; i++) {
 		mTrees[i]->predict(samples, *resp);
@@ -155,10 +156,13 @@ void RandomForest::predict(cv::InputArray samples, Mat test_labels, cv::Mat* res
 			mTrees[i]->predict(samples, *resp);
 
 			auto test_error = mTrees[i]->calcError(testData, false, noArray());
-			std::cout << "predict error " << test_error << endl;
+			std::cout << "tree " << i << " predict error " << test_error << endl;
+			avg_test_error += test_error/mTreeCount;
 		}
 	}
+	std::cout << "average predict error " << avg_test_error << endl;
 	//visualize_whole_matrix_int(pred, "Labels per tree");
+
 
 	cv::Mat labelsCount = Mat(s.height, mMaxCategories, CV_32S);
 	for (int idy = 0; idy < pred.size().height; idy++) {
@@ -167,13 +171,15 @@ void RandomForest::predict(cv::InputArray samples, Mat test_labels, cv::Mat* res
 		}
 	}
 
+
 	for (int idy = 0; idy < pred.size().height; idy++) {
 		for (int idx = 0; idx < pred.size().width; idx++) {
 			//printf("Feature : %d \n", idy);
-			//printf("Class : %d \n", (int)pred.at<float>(idy, idx));
+			//printf("Class : %d \n", (int)pred.at<int>(idy, idx));
 			labelsCount.at<int>(idy, pred.at<int>(idy, idx))++;
 		}
 	}
+
 	//visualize_whole_matrix_int(labelsCount, "Matrix confusion");
 
 	//visualize_matrix(labelsCount, "my visu", 6);

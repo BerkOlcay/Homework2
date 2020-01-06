@@ -6,8 +6,16 @@
 
 
 #include <opencv2/opencv.hpp>
+//#include <boost/filesystem.hpp>
 #include <vector>
 using namespace cv;
+//namespace fs = boost::filesystem;
+
+
+#include <string>
+#include <filesystem>
+namespace fs = std::filesystem;
+using namespace std;
 
 #include "img_functions.h"
 
@@ -66,16 +74,18 @@ public:
 
 
 private:
-    cv::Size win_size; 
-    cv::Size block_size;
-    cv::Size block_step;
-    cv::Size cell_size;
-    cv::Size pad_size;
-    int nbins;
-
     cv::HOGDescriptor hog_detector;
+    static void add_augmented_picture(HOGDescriptor descr, Mat* labels, Mat* features, Mat resizedImg, int classe);
 public:
+    static cv::Size win_size;
+    static cv::Size block_size;
+    static cv::Size block_step;
+    static cv::Size cell_size;
+    static cv::Size pad_size;
+    static int nbins;
+
     cv::HOGDescriptor& getHog_detector();
+    void create_dataset(int num_classes, std::string absolutePath, Mat* labels, Mat* features, int training);
 
 private:
     bool is_init;

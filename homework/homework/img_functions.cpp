@@ -11,6 +11,38 @@ int findNextMultiple(int number, int multiple) {
 
 }
 
+std::tuple< std::map<int, Rect>, int> create_ground_truth(std::string path, int nb_gt) {
+	std::ifstream file(path);
+	std::string line;
+	std::map<int, Rect> ground_truth;
+	while (std::getline(file, line)) {
+		std::istringstream stream(line);
+		int cpt = 0;
+		int classe;
+		Rect rectangle;
+		while (stream)
+		{
+			string s;
+			if (!std::getline(stream, s, ' ')) break;
+			if (cpt == 0)
+				classe = std::stoi(s);
+			if (cpt == 1)
+				rectangle.x = std::stoi(s);
+			if (cpt == 2)
+				rectangle.y = std::stoi(s);
+			if (cpt == 3)
+				rectangle.width = abs(std::stoi(s) - rectangle.x);
+			if (cpt == 4)
+				rectangle.height = abs(std::stoi(s) - rectangle.y);
+			cpt++;
+			//std::cout << s << endl;
+		}
+		ground_truth[classe] = rectangle;
+		nb_gt++;
+	}
+	return std::make_tuple(ground_truth, nb_gt);
+}
+
 void paddingToNextShape(cv::Mat src, cv::Mat &dst, int multiple, int mode, Size &newSize) {
 	
 	int newCols, newRows, rows, cols;
@@ -156,5 +188,27 @@ void paddingToNextShape(cv::Mat src, cv::Mat &dst, int multiple, int mode, Size 
 		printf("Undefined usage \n");
 		return;
 	}
+
+}
+
+void visualize_vector(std::vector<string> labels, std::string label, int num_elements) {
+
+	printf("Visualization : %s \n", label);
+	printf("[");
+	for (std::vector<string>::size_type i = 0; i != labels.size() && i != num_elements; i++) {
+		printf("%s,", labels[i]);
+	}
+	printf("...]\n");
+
+}
+
+void visualize_vector(std::vector<float> values, std::string label, int num_elements) {
+
+	printf("Visualization : %s \n", label);
+	printf("[");
+	for (std::vector<string>::size_type i = 0; i != values.size() && i != num_elements; i++) {
+		printf("%f,", values[i]);
+	}
+	printf("...]\n");
 
 }

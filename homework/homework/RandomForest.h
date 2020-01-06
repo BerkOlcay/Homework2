@@ -30,7 +30,7 @@ public:
     void getNDistinctRand(std::unordered_set<int>* index, int max_number, int number_samples);
     void subsample(Mat* sublabels, Mat* subfeatures, Mat labels, Mat features, float ratio);
     void train(Mat features, Mat labels);
-    void predict(cv::InputArray samples, Mat test_labels, cv::Mat* resp, cv::Ptr<cv::ml::TrainData> testData, cv::Mat* confidence, bool task2);
+    void predict(Mat samples, Mat test_labels, cv::Mat* resp, cv::Ptr<cv::ml::TrainData> testData, cv::Mat* confidence, bool task2);
 
 private:
     int mTreeCount;
