@@ -1,7 +1,6 @@
 
 
 #include "HOG_Descriptor.h"
-#include <iostream>
 
 cv::Size HOG_Descriptor::win_size = cv::Size(64, 64);
 cv::Size HOG_Descriptor::block_size = cv::Size(16, 16);
@@ -63,7 +62,6 @@ void HOG_Descriptor::create_dataset(int num_classes, std::string absolutePath, M
 
 	// Resizing the picture so that the whole dataset has the same size
 
-
 	int cellSide = HOG_Descriptor::cell_size.height;
 	Size cellSize = HOG_Descriptor::cell_size;
 	Size blockSize = HOG_Descriptor::block_size;
@@ -77,7 +75,7 @@ void HOG_Descriptor::create_dataset(int num_classes, std::string absolutePath, M
 		{
 			if (!fs::is_directory(i->path())) //we eliminate directories
 			{
-				cout << absolutePath + std::to_string(classe) + "/" + i->path().filename().string() << endl;
+				cout << absolutePath + std::to_string(classe) + "\\" + i->path().filename().string() << endl;
 				Mat img = imread(absolutePath + std::to_string(classe) + "/" + i->path().filename().string());
 
 				// Resizing the picture
@@ -85,7 +83,7 @@ void HOG_Descriptor::create_dataset(int num_classes, std::string absolutePath, M
 				paddingToNextShape(img, resizedImg, cellSide, SQUARE_RESIZED, winSize);
 
 				if (training == 1) {
-					add_augmented_picture(hog_detector, labels, features, resizedImg, classe);
+					this->add_augmented_picture(labels, features, resizedImg, classe);
 				}
 				else {
 					(*labels).push_back(classe);
@@ -105,8 +103,8 @@ void HOG_Descriptor::create_dataset(int num_classes, std::string absolutePath, M
 	(*features).convertTo(*features, CV_32F);
 }
 
-void HOG_Descriptor::add_augmented_picture(HOGDescriptor descr, Mat* labels, Mat* features, Mat resizedImg, int classe) {
-
+void HOG_Descriptor::add_augmented_picture(Mat* labels, Mat* features, Mat resizedImg, int classe) {
+	HOGDescriptor &descr = hog_detector;
 	int Nimages = 14;
 
 	// saving Label of the current picture

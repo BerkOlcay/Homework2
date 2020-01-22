@@ -102,7 +102,7 @@ void RandomForest::subsample(Mat* sublabels, Mat* subfeatures, Mat labels, Mat f
 
 void RandomForest::train(Mat features, Mat labels) {
 
-    float ratio = 0.4;
+    float ratio = 0.5;
 	float avg_train_error = 0.0;
 
     for (int i = 0; i < mTreeCount; i++) {
@@ -189,10 +189,16 @@ void RandomForest::predict(Mat samples, Mat test_labels, cv::Mat* resp, cv::Ptr<
 	int countR = 0;
 	int countO = 0;
 	int countJ = 0;
+	int countcorrect = 0;
+	int countall = 0;
 	for (int idy = 0; idy < pred.size().height; idy++) {
 		get_max_index(labelsCount.row(idy), &index, &value);
-		if (task2)
+		if (task2) {
 			printf("Current picture : %d -- Real : %d -- Confidence : %f %% \n", index, test_labels.at<int>(idy), (float)(100.0 * value) / mTreeCount);
+			if (index == test_labels.at<int>(idy))
+				countcorrect++;
+			countall++;
+		}
 		(*resp).at<int>(idy) = index;
 		float confidence_tmp = (float)(100.0 * value) / mTreeCount;
 		(*confidence).push_back(confidence_tmp);
@@ -209,6 +215,7 @@ void RandomForest::predict(Mat samples, Mat test_labels, cv::Mat* resp, cv::Ptr<
 		}
 	}
 
-	std::cout << "Predict -- Rose:" << countR << " Orange:" << countO << " Jaune:" << countJ << endl;
-
+	if (task2) {
+		printf("Total picture : %d -- Correct predictions : %d -- Accuracy : %f %% \n\n\n", countall, countcorrect, (float)(100.0 * countcorrect) / countall);
+	}
 }

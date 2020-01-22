@@ -6,14 +6,13 @@
 
 
 #include <opencv2/opencv.hpp>
-//#include <boost/filesystem.hpp>
 #include <vector>
 using namespace cv;
-//namespace fs = boost::filesystem;
 
 
 #include <string>
 #include <filesystem>
+#include <iostream>
 namespace fs = std::filesystem;
 using namespace std;
 
@@ -75,7 +74,7 @@ public:
 
 private:
     cv::HOGDescriptor hog_detector;
-    static void add_augmented_picture(HOGDescriptor descr, Mat* labels, Mat* features, Mat resizedImg, int classe);
+    void add_augmented_picture(Mat* labels, Mat* features, Mat resizdImg, int classe);
 public:
     static cv::Size win_size;
     static cv::Size block_size;

@@ -73,19 +73,19 @@ void classify_windows( Mat& image, int track, vector<Rect> rects,Mat y_pred,Mat 
 	int countJ = 0;
 	for (int idy = 0; idy < y_pred.size().height; idy++) {
 		if (y_pred.at<int>(idy,0) != 3 && confidence.at<float>(idy,0) > threshold) {
-			std::cout << "image " << idy<<" of classe "<< y_pred.at<int>(idy, 0) << "confidence " << confidence.at<float>(idy,0) << endl;
+			//std::cout << "image " << idy<<" of classe "<< y_pred.at<int>(idy, 0) << "confidence " << confidence.at<float>(idy,0) << endl;
 			
 			if (y_pred.at<int>(idy, 0) == 0) {
 				countO++;
-				rectangle(image, rects[idy], Scalar(0, 120, 255));
+				rectangle(image, rects[idy], Scalar(255, 0, 0));
 			}
 			if (y_pred.at<int>(idy, 0) == 1) {
 				countJ++;
-				rectangle(image, rects[idy], Scalar(0, 255, 255));
+				rectangle(image, rects[idy], Scalar(0, 255, 0));
 			}
 			if (y_pred.at<int>(idy, 0) == 2) {
 				countR++;
-				rectangle(image, rects[idy], Scalar(130, 120, 255));
+				rectangle(image, rects[idy], Scalar(0, 0, 255));
 			}
 			resultsRectTmp.push_back(rects[idy]);
 			resultsLabelsTmp.push_back(y_pred.at<int>(idy, 0));
@@ -122,18 +122,33 @@ int NMS(Mat& image, int track, int nb_pred, string resultsFolder, vector<Rect> *
 	int i = (*resultsLabels).size() - 1;
 	int k = 1;
 	Rect testRect, currentRect;
+	int testLabel, currentLabel;
 
 	while (i >= 0) {
 
 		currentRect = (*resultsRect)[i];
-		putText(image, "Class " + to_string((*resultsLabels)[i]) + ": " + to_string((*resultsConfidence)[i]), cv::Point(currentRect.x, currentRect.y), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.5, cv::Scalar(255, 0, 0));
-		rectangle(image, currentRect, Scalar(255, 0, 0));
+		currentLabel = (*resultsLabels)[i];
+
+		if ((*resultsLabels)[i] == 0) {
+			putText(image, "Class " + to_string((*resultsLabels)[i]) + ": " + to_string((*resultsConfidence)[i]), cv::Point(currentRect.x, currentRect.y), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255, 0, 0));
+			rectangle(image, currentRect, Scalar(255, 0, 0));
+
+		}
+		if ((*resultsLabels)[i] == 1) {
+			putText(image, "Class " + to_string((*resultsLabels)[i]) + ": " + to_string((*resultsConfidence)[i]), cv::Point(currentRect.x, currentRect.y), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(0, 255, 0));
+			rectangle(image, currentRect, Scalar(0, 255, 0));
+		}
+		if ((*resultsLabels)[i] == 2) {
+			putText(image, "Class " + to_string((*resultsLabels)[i]) + ": " + to_string((*resultsConfidence)[i]), cv::Point(currentRect.x, currentRect.y), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(0, 0, 255));
+			rectangle(image, currentRect, Scalar(0, 0, 255));
+		}
 
 		for (int j = i-1; j >= 0; j--) {
 
 			testRect = (*resultsRect)[j];
+			testLabel = (*resultsLabels)[j];
 			//std::cout << "overlap NMS: "<<IOU(currentRect, testRect) << endl;
-			if (IOU(currentRect, testRect) > threshold_IOU) {
+			if (IOU(currentRect, testRect) > threshold_IOU && (currentLabel == testLabel)) {
 				(*resultsLabels).erase((*resultsLabels).begin() + j);
 				(*resultsRect).erase((*resultsRect).begin() + j);
 				(*resultsConfidence).erase((*resultsConfidence).begin() + j);
@@ -173,14 +188,17 @@ int int_over_union(vector<Rect> resultsRect, vector<int> resultsLabels, int corr
 	Rect currentGroundTruth;
 	float IOU_ratio;
 
+	for (int i = 0; i < 3; i++) {
+		rectangle(image, ground_truth[i], Scalar(255, 255, 0));
+	}
+
 	for (int i = 0; i<resultsLabels.size(); i++) {
 
 		currentLabel = resultsLabels[i];
 		currentRect = resultsRect[i];
 		currentGroundTruth = ground_truth[currentLabel];
-		rectangle(image, Rect(currentGroundTruth.x, currentGroundTruth.y, currentGroundTruth.width, currentGroundTruth.height), Scalar(0, 255, 0));
 		IOU_ratio = IOU(currentRect, currentGroundTruth);
-		std::cout << " ratio : " << IOU_ratio << endl;
+		//std::cout << "class " << currentLabel  << " ratio : " << IOU_ratio << endl;
 
 		if (IOU_ratio > 0.5) {
 			//prediction is correct
